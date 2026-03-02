@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from app.agents.base_agent import run_agent
+from app.agent.base_agent import run_agent
 
 router = APIRouter()
 
