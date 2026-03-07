@@ -24,9 +24,16 @@ def create(
 
     Example:
         buildagents create my-agent-app
+        buildagents create .
         buildagents create my-agent-app --author "John" --description "My AI Agent"
     """
-    typer.echo(f"\n🚀 Creating project: {name}")
+    if name == ".":
+        import os
+        display_name = os.path.basename(os.getcwd())
+    else:
+        display_name = name
+
+    typer.echo(f"\n🚀 Creating project: {display_name}")
     create_project(name=name, author=author, description=description)
 
 
