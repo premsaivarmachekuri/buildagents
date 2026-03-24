@@ -72,11 +72,14 @@ BuildAgents (CLI Tool)
 ├── pyproject.toml            ← Package metadata, entry point, dependencies
 │
 └── src/buildagents/
-    ├── __init__.py           ← Version string (e.g. __version__ = "0.1.0")
+    ├── __init__.py           ← Version string (e.g. __version__ = "0.2.0")
+    ├── __main__.py           ← Package entry point (python -m buildagents)
     ├── cli.py                ← Typer CLI app (commands: create, version)
-    ├── generator.py          ← Core logic: copy template + replace placeholders
-    └── templates/
-        └── base/             ← The project template that gets scaffolded
+    └── core/                 ← Internal engine
+        ├── __init__.py
+        ├── generator.py      ← Jinja2-powered scaffold engine
+        └── templates/
+            └── base/         ← The project template that gets scaffolded
 ```
 
 **Flow:**
@@ -88,11 +91,11 @@ User runs CLI
 cli.py (Typer)
     │   Parses: name, --author, --description
     ▼
-generator.py → create_project()
+core/generator.py → create_project()
     │   1. Validates target dir doesn't exist
     │   2. shutil.copytree(templates/base → ./<name>)
-    │   3. _replace_placeholders() → walks all text files,
-    │      swaps {{PROJECT_NAME}}, {{AUTHOR}}, {{DESCRIPTION}}
+    │   3. Jinja2 Engine → walks all files and renders templates
+    │      with PROJECT_NAME, AUTHOR, DESCRIPTION
     ▼
 Scaffolded project on disk ✅
 ```

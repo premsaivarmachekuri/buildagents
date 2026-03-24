@@ -1,5 +1,5 @@
 import typer
-from buildagents.generator import create_project
+from buildagents.core.generator import create_project, GeneratorError
 
 app = typer.Typer(
     name="buildagents",
@@ -27,14 +27,33 @@ def create(
         buildagents create .
         buildagents create my-agent-app --author "John" --description "My AI Agent"
     """
-    if name == ".":
+    is_dot = name == "."
+    if is_dot:
         import os
         display_name = os.path.basename(os.getcwd())
     else:
         display_name = name
 
     typer.echo(f"\n🚀 Creating project: {display_name}")
-    create_project(name=name, author=author, description=description)
+    
+    try:
+        create_project(name=name, author=author, description=description)
+        
+        typer.echo(f"✅ Project '{display_name}' created successfully!")
+        typer.echo(f"\n📂 Next steps:")
+        if not is_dot:
+            typer.echo(f"   cd {name}")
+        typer.echo(f"   cp .env.example .env")
+        typer.echo(f"   pip install -r requirements.txt")
+        typer.echo(f"   uvicorn main:app --reload")
+        typer.echo(f"\n🔥 Build something dangerous.\n")
+        
+    except GeneratorError as e:
+        typer.echo(f"❌ {str(e)}")
+        raise typer.Exit(code=1)
+    except Exception as e:
+        typer.echo(f"❌ An unexpected error occurred: {str(e)}")
+        raise typer.Exit(code=1)
 
 
 @app.command()
