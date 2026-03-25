@@ -12,23 +12,28 @@ class GeneratorError(Exception):
     pass
 
 
-def create_project(name: str, author: str, description: str) -> Path:
+def create_project(name: str, author: str, description: str, template: str = "base") -> Path:
     """
-    Scaffold a new project from the base template.
+    Scaffold a new project from a selected template.
 
     Args:
         name: Project folder name (or '.' for current dir)
         author: Project author name
         description: Project description
+        template: Template to use (default: 'base')
 
     Returns:
         Path to the created project.
     
     Raises:
-        GeneratorError: If project creation fails.
+        GeneratorError: If project creation fails or template not found.
     """
-    template_dir = TEMPLATES_DIR / "base"
+    template_dir = TEMPLATES_DIR / template
     
+    if not template_dir.exists():
+        available_templates = [d.name for d in TEMPLATES_DIR.iterdir() if d.is_dir()]
+        raise GeneratorError(f"Template '{template}' not found. Available templates: {', '.join(available_templates)}")
+
     if name == ".":
         target_dir = Path.cwd()
         project_name = target_dir.name

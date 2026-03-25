@@ -18,6 +18,12 @@ def create(
         "-d",
         help="Project description",
     ),
+    template: str = typer.Option(
+        "base",
+        "--template",
+        "-t",
+        help="Choose a scaffold template",
+    ),
 ):
     """
     Scaffold a production-ready Agentic AI project.
@@ -25,7 +31,8 @@ def create(
     Example:
         buildagents create my-agent-app
         buildagents create .
-        buildagents create my-agent-app --author "John" --description "My AI Agent"
+        buildagents create my-agent-app --template minimal
+        buildagents create my-agent-app --author "John" --description "My AI Agent" --template base
     """
     is_dot = name == "."
     if is_dot:
@@ -34,10 +41,10 @@ def create(
     else:
         display_name = name
 
-    typer.echo(f"\n🚀 Creating project: {display_name}")
+    typer.echo(f"\n🚀 Creating project: {display_name} using template '{template}'")
     
     try:
-        create_project(name=name, author=author, description=description)
+        create_project(name=name, author=author, description=description, template=template)
         
         typer.echo(f"✅ Project '{display_name}' created successfully!")
         typer.echo(f"\n📂 Next steps:")

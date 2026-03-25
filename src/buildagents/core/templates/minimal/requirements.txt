@@ -1,0 +1,2 @@
+# Core dependencies
+# No additional dependencies for minimal template
