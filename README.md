@@ -255,8 +255,8 @@ async def run_agent(query: str) -> str:
 ## 🗺️ Roadmap
 
 - [ ] Add more templates (multi-agent, RAG, tool-use)
-- [ ] `--template` flag to choose different scaffolds
-- [ ] Interactive mode with prompts
+- [x] `--template` flag to choose different scaffolds
+- [x] Interactive mode with prompts
 - [ ] Built-in `buildagents add tool` command to extend existing projects
 - [ ] PyPI publish pipeline
 

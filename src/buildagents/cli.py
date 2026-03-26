@@ -1,3 +1,4 @@
+from typing import Optional
 import typer
 from buildagents.core.generator import create_project, GeneratorError
 
@@ -10,19 +11,22 @@ app = typer.Typer(
 
 @app.command()
 def create(
-    name: str = typer.Argument(..., help="Name of your agentic AI project"),
-    author: str = typer.Option("Your Name", "--author", "-a", help="Your name"),
-    description: str = typer.Option(
-        "An Agentic AI Application",
+    name: Optional[str] = typer.Argument(None, help="Name of your agentic AI project"),
+    author: Optional[str] = typer.Option(None, "--author", "-a", help="Your name"),
+    description: Optional[str] = typer.Option(
+        None,
         "--description",
         "-d",
         help="Project description",
     ),
-    template: str = typer.Option(
-        "base",
+    template: Optional[str] = typer.Option(
+        None,
         "--template",
         "-t",
         help="Choose a scaffold template",
+    ),
+    interactive: bool = typer.Option(
+        False, "--interactive", "-i", help="Run in interactive mode"
     ),
 ):
     """
@@ -32,8 +36,21 @@ def create(
         buildagents create my-agent-app
         buildagents create .
         buildagents create my-agent-app --template minimal
-        buildagents create my-agent-app --author "John" --description "My AI Agent" --template base
+        buildagents create --interactive
     """
+    if name is None:
+        typer.echo("\n🛠️ No project name provided. Starting interactive setup...")
+        name = typer.prompt("Project name", default="my-agent-app")
+        interactive = True  # Default to interactive if name was missing
+
+    if interactive:
+        author = typer.prompt("Author name", default=author or "Your Name")
+        description = typer.prompt("Project description", default=description or "An Agentic AI Application")
+        template = typer.prompt("Select template (base/minimal)", default=template or "base")
+    else:
+        author = author or "Your Name"
+        description = description or "An Agentic AI Application"
+        template = template or "base"
     is_dot = name == "."
     if is_dot:
         import os
