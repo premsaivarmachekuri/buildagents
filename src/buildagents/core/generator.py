@@ -91,4 +91,53 @@ def _process_templates(directory: Path, context: Dict[str, Any]) -> None:
             except Exception as e:
                 # Log error or skip if it's not a valid template
                 # Some files might have curly braces but not be valid Jinja (though unlikely in our templates)
-                pass
+                pass
+
+
+def add_tool(name: str) -> Path:
+    """
+    Add a new tool module to an existing project.
+    
+    Args:
+        name: Name of the tool (e.g., 'search', 'calculator')
+        
+    Returns:
+        Path to the created tool file.
+        
+    Raises:
+        GeneratorError: If not in a buildagents project or tool creation fails.
+    """
+    project_root = Path.cwd()
+    app_dir = project_root / "app"
+    
+    # Check if we're in a buildagents project
+    if not app_dir.exists():
+        raise GeneratorError("No 'app/' directory found. Are you in a buildagents project root?")
+        
+    tools_dir = app_dir / "tools"
+    tools_dir.mkdir(exist_ok=True)
+    
+    # Create __init__.py if it doesn't exist
+    init_file = tools_dir / "__init__.py"
+    if not init_file.exists():
+        init_file.touch()
+        
+    tool_file = tools_dir / f"{name.lower()}.py"
+    if tool_file.exists():
+        raise GeneratorError(f"Tool '{name}' already exists at {tool_file}")
+        
+    # Simple tool template
+    tool_content = f"""from langchain_core.tools import tool
+
+@tool
+def {name.lower()}(query: str) -> str:
+    \"\"\"{name.capitalize()} tool documentation.\"\"\"
+    # TODO: Implement your tool logic here
+    return f"{name.capitalize()} response for: " + query
+"""
+    
+    try:
+        tool_file.write_text(tool_content, encoding="utf-8")
+        return tool_file
+    except Exception as e:
+        raise GeneratorError(f"Failed to create tool file: {str(e)}")

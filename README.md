@@ -51,6 +51,7 @@ Visit: `http://localhost:8000/docs` → Swagger UI is live.
 | Command | Description |
 |---|---|
 | `buildagents create <name>` | Scaffold a new agentic AI project |
+| `buildagents add tool <name>` | Add a new tool to an existing project |
 | `buildagents version` | Print the current CLI version |
 
 ### `create` Options
@@ -59,6 +60,18 @@ Visit: `http://localhost:8000/docs` → Swagger UI is live.
 |---|---|---|---|
 | `--author` | `-a` | `"Your Name"` | Your name (used in README) |
 | `--description` | `-d` | `"An Agentic AI Application"` | Project description |
+
+### `add tool`
+
+`buildagents add tool <name>`
+
+Adds a new LangChain-compatible tool to your project's `app/tools/` directory.
+
+**Example:**
+```bash
+buildagents add tool calculator
+```
+This will create `app/tools/calculator.py` with a basic tool stub.
 
 ---
 
@@ -257,7 +270,7 @@ async def run_agent(query: str) -> str:
 - [ ] Add more templates (multi-agent, RAG, tool-use)
 - [x] `--template` flag to choose different scaffolds
 - [x] Interactive mode with prompts
-- [ ] Built-in `buildagents add tool` command to extend existing projects
+- [x] Built-in `buildagents add tool` command to extend existing projects
 - [ ] PyPI publish pipeline
 
 ---

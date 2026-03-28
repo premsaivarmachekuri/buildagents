@@ -1,6 +1,6 @@
 from typing import Optional
 import typer
-from buildagents.core.generator import create_project, GeneratorError
+from buildagents.core.generator import create_project, add_tool, GeneratorError
 
 app = typer.Typer(
     name="buildagents",
@@ -71,6 +71,47 @@ def create(
         typer.echo(f"   pip install -r requirements.txt")
         typer.echo(f"   uvicorn main:app --reload")
         typer.echo(f"\n🔥 Build something dangerous.\n")
+        
+    except GeneratorError as e:
+        typer.echo(f"❌ {str(e)}")
+        raise typer.Exit(code=1)
+    except Exception as e:
+        typer.echo(f"❌ An unexpected error occurred: {str(e)}")
+        raise typer.Exit(code=1)
+
+
+add_app = typer.Typer(name="add", help="Add components to an existing project")
+app.add_typer(add_app)
+
+
+@add_app.command()
+def tool(
+    name: str = typer.Argument(..., help="Name of the tool to add"),
+):
+    """
+    Add a new tool to your agentic AI project.
+
+    Example:
+        buildagents add tool search
+        buildagents add tool calculator
+    """
+    typer.echo(f"\n🛠️ Adding tool: {name}...")
+    
+    try:
+        from pathlib import Path
+        tool_file = add_tool(name=name)
+        
+        # Get relative path for display
+        try:
+            rel_path = tool_file.relative_to(Path.cwd())
+        except ValueError:
+            rel_path = tool_file
+            
+        typer.echo(f"✅ Tool '{name}' created at {rel_path}")
+        typer.echo(f"\n📂 Next steps:")
+        typer.echo(f"   1. Implement the logic in {rel_path}")
+        typer.echo(f"   2. Import and use it in your agent (app/agent/base_agent.py)")
+        typer.echo(f"\n🔥 Keep building.\n")
         
     except GeneratorError as e:
         typer.echo(f"❌ {str(e)}")
