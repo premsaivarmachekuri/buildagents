@@ -271,7 +271,7 @@ async def run_agent(query: str) -> str:
 - [x] `--template` flag to choose different scaffolds
 - [x] Interactive mode with prompts
 - [x] Built-in `buildagents add tool` command to extend existing projects
-- [ ] PyPI publish pipeline
+- [x] PyPI publish pipeline
 
 ---
 
